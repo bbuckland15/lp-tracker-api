@@ -1,0 +1,51 @@
+# Click "Send Request" above each block (VS Code REST Client extension or Visual Studio).
+@host = http://localhost:5080
+
+### Current standings
+GET {{host}}/api/standings
+
+### All players
+GET {{host}}/api/players
+
+### Add a player
+POST {{host}}/api/players
+Content-Type: application/json
+
+{ "name": "Riley" }
+
+### Record a match (Ben won +21, Alex lost -18)
+POST {{host}}/api/matches
+Content-Type: application/json
+
+{
+  "results": [
+    { "playerId": 1, "won": true,  "lpDelta": 21 },
+    { "playerId": 2, "won": false, "lpDelta": -18 }
+  ]
+}
+
+### Invalid match: won with negative LP -> 400 with an error list
+POST {{host}}/api/matches
+Content-Type: application/json
+
+{
+  "results": [ { "playerId": 1, "won": true, "lpDelta": -20 } ]
+}
+
+### One player's LP history with running total
+GET {{host}}/api/players/1/history
+
+### Delete a match entered by mistake
+DELETE {{host}}/api/matches/1
+
+### ---- Riot API (needs Riot:ApiKey in user-secrets) ----
+
+### Link player 1 to a Riot account (use a real Riot ID)
+PUT {{host}}/api/players/1/riot-account
+Content-Type: application/json
+
+{ "riotId": "YourName#NA1" }
+
+### Check Riot for new games right now
+# The first sync for a player only saves a baseline. Play a ranked game, then sync again.
+POST {{host}}/api/sync
